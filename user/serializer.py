@@ -17,3 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
             raise ("You should set a password!" )
         instance.save()
         return instance
+    
+
+class UserVerifySerializer(serializers.Serializer):
+    otp = serializers.CharField(max_length=4)
