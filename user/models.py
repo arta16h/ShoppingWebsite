@@ -2,7 +2,7 @@ import re
 from core.models import BaseModel
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 # Create your models here.
 
@@ -27,6 +27,7 @@ class UserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self.create_user(phone, password, **other)
+
 
 EMAIL_REGEX_PATTERN = r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+"
 PHONE_REGEX_PATTERN = r"(0|\+98)?([ ]|-|[()]){0,2}9[1|2|3|4]([ ]|-|[()]){0,2}(?:[0-9]([ ]|-|[()]){0,2}){8}"
@@ -75,7 +76,7 @@ class Address(BaseModel):
         return self.address
     
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     email = EmailField(validators=[email_validator], unique=True)
     phone = PhoneNumberField(validators=[phone_validator], unique=True, max_length=20)
     username = models.CharField(max_length=50)
