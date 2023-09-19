@@ -84,3 +84,13 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     phone = PhoneNumberField(validators=[phone_validator], unique=True, max_length=20)
     password = models.CharField(max_length=50)
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'phone'
+    REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return f"{self.phone}"
