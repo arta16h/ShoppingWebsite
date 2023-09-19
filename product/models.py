@@ -11,3 +11,15 @@ class Category(BaseModel):
 
     def __str__(self):
         return self.name
+    
+
+class Product(BaseModel):
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(decimal_places=2, max_digits=6)
+    quantity = models.IntegerField()
+    description = models.TextField()
+    image = models.ImageField(null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
