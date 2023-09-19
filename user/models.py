@@ -6,10 +6,16 @@ from django.contrib.auth.models import AbstractBaseUser
 # Create your models here.
 
 EMAIL_REGEX_PATTERN = r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+"
+PHONE_REGEX_PATTERN = r"(0|\+98)?([ ]|-|[()]){0,2}9[1|2|3|4]([ ]|-|[()]){0,2}(?:[0-9]([ ]|-|[()]){0,2}){8}"
 
 def email_validator(email) :
     if not (matched := re.fullmatch(EMAIL_REGEX_PATTERN, email.strip())):
         raise ValidationError("Invalid Email!")
+    return matched
+
+def phone_validator(phone):
+    if not (matched := re.fullmatch(PHONE_REGEX_PATTERN, phone.strip())):
+        raise ValidationError("Invalid phone number!")
     return matched
 
 class EmailField(models.CharField):
