@@ -21,7 +21,7 @@ class Payment(BaseModel):
 
 class Order(BaseModel):
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
-    discount = models.ForeignKey(Discount on_delete=models.SET_NULL)
+    discount = models.ForeignKey(Discount, on_delete=models.SET_NULL)
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
 
 
