@@ -47,7 +47,7 @@ class PhoneNumberField(models.CharField):
 
 class User(AbstractBaseUser):
     email = EmailField(validators=[email_validator], unique=True)
-    phone = models.CharField(max_length=14)
+    phone = PhoneNumberField(validators=[phone_validator], unique=True, max_length=20)
     username = models.CharField(max_length=50)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=100)
