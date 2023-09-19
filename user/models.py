@@ -12,11 +12,22 @@ def email_validator(email) :
         raise ValidationError("Invalid Email!")
     return matched
 
+class EmailField(models.CharField):
+    def get_value(self, value):
+        if value is None:
+            return value
+        try:
+            regex = email_validator(value)
+        except ValidationError:
+            raise
+
+        return regex
+
 class User(AbstractBaseUser):
-    email=models.EmailField()
-    phone=models.CharField(max_length=14)
-    username=models.CharField(max_length=50)
-    first_name=models.CharField(max_length=50)
-    last_name=models.CharField(max_length=100)
-    password=models.CharField(max_length=50)
-    address=models.ForeignKey(on_delete=models.CASCADE)
+    email = EmailField(validators=[email_validator], unique=True)
+    phone = models.CharField(max_length=14)
+    username = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=100)
+    password = models.CharField(max_length=50)
+    address = models.ForeignKey(on_delete=models.CASCADE)
