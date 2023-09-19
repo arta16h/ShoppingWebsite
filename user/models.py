@@ -2,9 +2,31 @@ import re
 from core.models import BaseModel
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 # Create your models here.
+
+class UserManager(BaseUserManager):
+
+    def create_user(self, phone, password, **other):
+        if phone is None:
+            raise ValueError("Please enter a phone number")
+
+        user = self.model(phone=phone, **other)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, phone, password=None, **other) :
+        other.setdefault('is_staff', True)
+        other.setdefault('is_superuser', True)
+
+        if other.get('is_staff') is not True :
+            raise ValueError('Superuser must have is_staff=True.')
+        if other.get('is_superuser') is not True :
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(phone, password, **other)
 
 EMAIL_REGEX_PATTERN = r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+"
 PHONE_REGEX_PATTERN = r"(0|\+98)?([ ]|-|[()]){0,2}9[1|2|3|4]([ ]|-|[()]){0,2}(?:[0-9]([ ]|-|[()]){0,2}){8}"
