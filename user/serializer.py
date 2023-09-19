@@ -8,13 +8,12 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'phone', 'password']
 
-
     def create(self, validate_data):
-        password = validate_data.pop("password",None)
+        password = validate_data.pop("password", None)
         instance = self.Meta.model(**validate_data)
         if password is not None:
             instance.set_password(password)
         else:
-            raise ("You don't add password" )
+            raise ("You should set a password!" )
         instance.save()
         return instance
