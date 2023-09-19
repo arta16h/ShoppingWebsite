@@ -1,4 +1,5 @@
 import re
+from core.models import BaseModel
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractBaseUser
@@ -45,6 +46,13 @@ class PhoneNumberField(models.CharField):
         return regex
     
 
+class Address(BaseModel):
+    address = models.TextField()
+
+    def __str__(self):
+        return self.address
+    
+
 class User(AbstractBaseUser):
     email = EmailField(validators=[email_validator], unique=True)
     phone = PhoneNumberField(validators=[phone_validator], unique=True, max_length=20)
@@ -52,4 +60,4 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=100)
     password = models.CharField(max_length=50)
-    address = models.ForeignKey(on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
