@@ -8,3 +8,10 @@ class Discount(BaseModel):
 
     def __str__(self):
         return self.discount
+    
+
+class Payment(BaseModel):
+    is_paid = models.BooleanField()
+
+    def __str__(self):
+        return self.is_paid
