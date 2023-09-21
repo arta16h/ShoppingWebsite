@@ -1,7 +1,10 @@
 import random, datetime, jwt
 from datetime import timedelta
 
+from django.views import View
 from django.utils import timezone
+from django.shortcuts import redirect
+from django.contrib.auth import logout
 from django.contrib.auth.models import update_last_login
 
 from rest_framework import status
@@ -55,3 +58,9 @@ class LoginView(APIView):
 
         update_last_login(None, user)
         return response
+    
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect("login")
