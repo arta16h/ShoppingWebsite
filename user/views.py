@@ -10,7 +10,7 @@ from rest_framework.views import Response, APIView
 from rest_framework.exceptions import AuthenticationFailed
 
 from .models import User
-from .serializer import UserSerializer,UserVerifySerializer
+from .serializer import UserSerializer
 
 # Create your views here.
 
@@ -63,5 +63,5 @@ class LogoutAPIView(APIView):
     def post(self, _):
         response = Response()
         response.delete_cookie(key="refreshToken")
-        response.data = {"message": "success"}
+        response.data = {"message": "succed"}
         return response
