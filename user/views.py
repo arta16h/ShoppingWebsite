@@ -3,8 +3,6 @@ from datetime import timedelta
 
 from django.views import View
 from django.utils import timezone
-from django.shortcuts import redirect
-from django.contrib.auth import logout
 from django.contrib.auth.models import update_last_login
 
 from rest_framework import status
@@ -60,7 +58,10 @@ class LoginView(APIView):
         return response
     
 
-class LogoutView(View):
-    def get(self, request):
-        logout(request)
-        return redirect("login")
+class LogoutAPIView(APIView):
+
+    def post(self, _):
+        response = Response()
+        response.delete_cookie(key="refreshToken")
+        response.data = {"message": "success"}
+        return response
