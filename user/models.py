@@ -68,12 +68,16 @@ class PhoneNumberField(models.CharField):
 
         return regex
     
-
 class Address(BaseModel):
-    address = models.TextField()
+    country = models.CharField(max_length=100)
+    province = models.CharField(max_length=50)
+    city = models.CharField(max_length=100)
+    street = models.CharField(max_length=50)
+    detail = models.CharField(max_length=300)
+    postal_code = models.IntegerField()
 
     def __str__(self):
-        return self.address
+        return f"{self.detail}, {self.street}, {self.city}, {self.country}"
     
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
