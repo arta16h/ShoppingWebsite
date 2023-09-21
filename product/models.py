@@ -20,6 +20,7 @@ class Product(BaseModel):
     description = models.TextField()
     image = models.ImageField(null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    is_available = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
