@@ -20,9 +20,18 @@ class Payment(BaseModel):
     
 
 class Order(BaseModel):
+    class StatusChoice(models.IntegerChoices):
+        PENDING = 1, "PENDING"
+        CONFIRMED = 2, "CONFIRMED"
+        CANCEL = 3, "CANCELED"
+
+    status = models.IntegerField(choices=StatusChoice.choices, default=1)
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
     discount = models.ForeignKey(Discount, on_delete=models.SET_NULL)
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"order id:{self.id}"
 
 
 class OrderItem(BaseModel):
