@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Order
+from .models import Order, OrderItem
 
 # Register your models here.
 
@@ -9,4 +9,12 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ("user",)
     list_filter = ("status",)
     list_editable = ("status",)
+    list_per_page = 10
+
+
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ("product", "quantity")
+    list_filter = ("product")
+    autocomplete_fields = ("product",)
     list_per_page = 10
