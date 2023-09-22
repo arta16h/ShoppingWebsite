@@ -12,3 +12,10 @@ class ProductListView(APIView):
         products = Product.objects.filter(category=category)
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
+    
+
+class ProductDetailView(APIView):
+    def get(self, request, slug):
+        product = Product.objects.get(slug=slug)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
