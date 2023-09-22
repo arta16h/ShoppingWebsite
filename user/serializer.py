@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Address,
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,3 +21,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserVerifySerializer(serializers.Serializer):
     otp = serializers.CharField(max_length=4)
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields =("province", "city", "street", "detail", "postal_code")
+
