@@ -56,4 +56,38 @@ class JWTAuthentication(authentication.BaseAuthentication):
     @classmethod
     def get_the_token_from_header(cls, token):
         token = token.replace('Bearer', '').replace(' ', '')
-        return token     
+        return token   
+
+
+class LoginAuthentication(authentication.BaseAuthentication):
+
+    def authenticate(self, request):
+        authorization_header = request.headers.get("Authorization")
+        if not authorization_header:
+           return None
+
+        jwt_token = JWTAuthentication.get_the_token_from_header(authorization_header)
+        payload={}
+        try:
+            payload = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
+        except jwt.exceptions.ExpiredSignatureError:
+            raise AuthenticationFailed("Signature expired")
+        except:
+            return None
+
+        user_id = payload.get("user_id")
+        if not user_id:
+            return None
+
+        user = User.objects.filter(id=user_id).first()
+        if not user:
+            return None
+        return user, payload
+
+    def authenticate_header(self, request):
+        return "Bearer"
+
+    @classmethod
+    def get_the_token_from_header(cls, token):
+        token = token.replace("Bearer", "").replace(" ", "")
+        return token  
