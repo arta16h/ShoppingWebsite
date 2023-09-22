@@ -5,13 +5,23 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 # Create your views here.
-
-class ProductListView(APIView):
-    def get(self, request, slug):
-        category = Category.objects.get(slug=slug)
-        products = Product.objects.filter(category=category)
+class ProductListApiView(APIView):
+    def get(self, request):
+        search = request.GET.get("search")
+        if not search:
+            products = Product.objects.all()
+        else:
+            products = Product.objects.filter(title__icontains = search)
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
+    
+
+# class ProductListView(APIView):
+#     def get(self, request, slug):
+#         category = Category.objects.get(slug=slug)
+#         products = Product.objects.filter(category=category)
+#         serializer = ProductSerializer(products, many=True)
+#         return Response(serializer.data)
     
 
 class ProductDetailView(APIView):
