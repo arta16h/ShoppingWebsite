@@ -1,16 +1,18 @@
 import random, datetime, jwt
 from datetime import timedelta
 
+from django.conf import settings
 from django.views import View
 from django.utils import timezone
 from django.contrib.auth.models import update_last_login
 
-from rest_framework import status
+from rest_framework import status, permissions, exceptions
 from rest_framework.views import Response, APIView
 from rest_framework.exceptions import AuthenticationFailed
 
 from .models import User
 from .serializer import UserSerializer
+from .utils import generate_access_token, generate_refresh_token
 
 # Create your views here.
 
@@ -65,3 +67,26 @@ class LogoutAPIView(APIView):
         response.delete_cookie(key="refreshToken")
         response.data = {"message": "succed"}
         return response
+    
+
+class RefreshTokenApiView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        refresh_token = request.COOKIES.get('refreshtoken')
+        if refresh_token is None:
+            raise exceptions.AuthenticationFailed
+        try:
+            payload = jwt.decode(refresh_token, settings.REFRESH_TOKEN_SECRET, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise exceptions.AuthenticationFailed('expired refresh token')
+
+        user = User.objects.filter(id=payload.get('user_id')).first()
+        if user is None:
+            raise exceptions.AuthenticationFailed('User not found')
+
+        if not user.is_active:
+            raise exceptions.AuthenticationFailed("user isn't active")
+
+        access_token = generate_access_token(user)
+        return Response({'access_token': access_token})
