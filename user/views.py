@@ -37,7 +37,17 @@ class SendOTPView(APIView):
             serializer.create_otp(request, serializer.data['phone'])
             return Response (data={'message':"200"})
 
-            
+
+class VerifyOTP(APIView):
+    def post(self, request):
+        serliazer=LoginOTPSerializer(data=request.data, context={'request':request})
+        if serliazer.is_valid(raise_exception=True):
+            user=User.objects.get(phone=request.session.get('phone'))
+            access_token=user.get_access_token()
+            refresh_token=user.get_refresh_token()
+            return Response(data={'message':"success", "AT":access_token, "RT":refresh_token})
+
+
 class LoginView(APIView):
 
     def post(self, request):
