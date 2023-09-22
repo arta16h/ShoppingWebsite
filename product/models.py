@@ -8,6 +8,7 @@ class Category(BaseModel):
     title = models.CharField(max_length=50)
     description = models.TextField()
     image = models.ImageField(null=True,blank=True)
+    slug = models.SlugField(unique=True)
 
     def __str__(self):
         return self.name
@@ -21,6 +22,7 @@ class Product(BaseModel):
     image = models.ImageField(null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     is_available = models.BooleanField(default=True)
+    slug = models.SlugField(unique=True)
 
     def __str__(self):
         return self.name
