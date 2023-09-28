@@ -85,3 +85,15 @@ class TestCartApiView(APITestCase):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(CartItem.objects.count(), 0)
+
+    def test_delete_cart_unauthenticated(self):
+        self.client.logout()
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_data = {
+            "user": None,
+            "cart_items": [],
+            "total_price_with_discount": "0",
+            "total_price": "0",
+        }
+        self.assertEqual(response.data, expected_data)
