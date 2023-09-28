@@ -1,6 +1,7 @@
 from .models import Product, Category
 from .serializers import ProductSerializer
 
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -29,3 +30,14 @@ class ProductDetailView(APIView):
         product = Product.objects.get(slug=slug)
         serializer = ProductSerializer(product)
         return Response(serializer.data)
+    
+
+class SearchProductView(APIView):
+    def post(self, request):
+        serializer=SearchProductSerializer(data=request.data)
+        if serializer.is_valid():
+            products=Product.objects.filter(name__contains= serializer.data.get("name"))
+            if products:
+                serializer = ProductListSerializer(products, many=True)
+                return Response(serializer.data)
+            return Response (status=status.HTTP_404_NOT_FOUND)
