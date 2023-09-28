@@ -1,5 +1,5 @@
 from .models import Product, Category
-from .serializers import ProductSerializer, SearchProductSerializer
+from .serializers import ProductSerializer, SearchProductSerializer, ProductListSerializer
 
 from rest_framework import status
 from rest_framework.views import APIView
