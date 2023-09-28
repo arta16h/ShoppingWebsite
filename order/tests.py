@@ -55,3 +55,14 @@ class TestAddToCartApiView(APITestCase):
         self.product.save()
         response = self.client.post(self.url, data={"product_id": self.product.id})
         self.assertEqual(response.data, {"message": "Product is not available"})
+
+
+class TestCartApiView(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.category = baker.make(Category)
+        self.product = baker.make(Product, info="", category=self.category)
+        self.user = User.objects.create(phone_number="09102098929", role=1)
+        self.cart = Cart.objects.create(customer=self.user)
+        self.cart_item = CartItem.objects.create(cart=self.cart, product=self.product, quantity=2)
+        self.url = reverse("cart_api")
