@@ -13,7 +13,7 @@ class CustomUserAdmin(UserAdmin):
         ("Permissions", {"fields": ("is_staff", "is_active")})
         )
     add_fieldsets = (None, {"fields": ("username", "phone", "password", "is_staff", "is_active")})
-    search_fields = ("phone")
+    search_fields = ("phone",)
     ordering = ("first_name","last_name")
 
 

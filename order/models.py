@@ -6,10 +6,10 @@ from product.models import Product
 # Create your models here.
 
 class Discount(BaseModel):
-    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    dis = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
     def __str__(self):
-        return self.discount
+        return self.dis
     
 
 class Payment(BaseModel):
@@ -27,7 +27,7 @@ class Order(BaseModel):
 
     status = models.IntegerField(choices=StatusChoice.choices, default=1)
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
-    discount = models.ForeignKey(Discount, on_delete=models.SET_NULL)
+    discount = models.ForeignKey(Discount, on_delete=models.CASCADE)
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
 
     def __str__(self):

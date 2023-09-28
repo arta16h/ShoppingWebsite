@@ -15,6 +15,6 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ("product", "quantity")
-    list_filter = ("product")
+    list_filter = ("product", )
     autocomplete_fields = ("product",)
     list_per_page = 10
