@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.views import View
 from django.utils import timezone
+from django.contrib.auth import login
 from django.contrib.auth.models import update_last_login
 
 from rest_framework import status, permissions, exceptions
@@ -75,6 +76,46 @@ class LoginView(APIView):
 
         update_last_login(None, user)
         return response
+    
+
+class UserVerifyAPIView(APIView):
+
+    def get(self, request):
+        if (not self.expiration_time) or (
+            timezone.now() > timezone.datetime.strptime(self.expiration_time, "%d/%m/%Y, %H:%M:%S")):
+            request = generate_2fa(request)
+        else:
+            print(f"otp:{self.generated_otp}  exp:{self.expiration_time}")
+        return super().get(request)
+
+    def post(self, request):
+        if not all([self.generated_otp,self.expiration_time]):
+            return Response("panel:user_verify")
+        if timezone.now() > timezone.datetime.strptime(self.expiration_time, "%d/%m/%Y, %H:%M:%S"):
+            print("expired")
+            self.request = generate_2fa(request)
+            form = self.get_form()
+            form.add_error("otp", "A new code has been sent to you")
+            return self.form_invalid(form)
+        else:
+            form = self.get_form()
+            if form.is_valid():
+                return self.form_valid(form)
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        entered_otp = form.clean().get("otp")
+        if entered_otp == str(self.generated_otp):
+            self.request.session.pop("2FA")
+            self.request.session.pop("2fa_expire")
+            self.request.session["authenticated"] = True
+            user = User.objects.get(phone=self.user_phone)
+            login(self.request, user, "users.auth.UserAuthBackend")
+            self.request.session["phone"] = user.phone
+            return super().form_valid(form)
+        else:
+            form.add_error("otp","Invalid code entered")
+            return self.form_invalid(form)
     
 
 class LogoutAPIView(APIView):
