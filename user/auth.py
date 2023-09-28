@@ -43,7 +43,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
             raise ParseError()
         
         if not user_id:
-            raise AuthenticationFailed('User Id not found in JWT')
+            raise AuthenticationFailed('User Id not found')
         
         if not user:
             raise AuthenticationFailed('User not found')
