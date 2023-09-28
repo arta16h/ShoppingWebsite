@@ -1,5 +1,4 @@
 import re
-from core.models import BaseModel
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
@@ -68,7 +67,7 @@ class PhoneNumberField(models.CharField):
 
         return regex
     
-class Address(BaseModel):
+class Address:
     country = models.CharField(max_length=100)
     province = models.CharField(max_length=50)
     city = models.CharField(max_length=100)
@@ -80,14 +79,14 @@ class Address(BaseModel):
         return f"{self.detail}, {self.street}, {self.city}, {self.country}"
     
 
-class User(AbstractBaseUser, PermissionsMixin, BaseModel):
+class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=50)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=100)
     email = EmailField(validators=[email_validator], unique=True)
     phone = PhoneNumberField(validators=[phone_validator], unique=True, max_length=20)
     password = models.CharField(max_length=50)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    address = models.ForeignKey("Address", on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
