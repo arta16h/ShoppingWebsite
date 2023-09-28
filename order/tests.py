@@ -109,3 +109,9 @@ class TestCartApiView(APITestCase):
             "total_price": "0",
         }
         self.assertEqual(response.data, expected_data)
+
+    def test_put_cart_unauthenticated(self):
+        self.client.logout()
+        data = {"cart_items": [{"product_id": str(self.product.id), "quantity": 3},]}
+        response = self.client.put(self.url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
