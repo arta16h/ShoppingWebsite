@@ -79,3 +79,9 @@ class TestCartApiView(APITestCase):
         data = {"cart_items": [{"product_id": str(self.product.id), "quantity": 3},]}
         response = self.client.put(self.url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_delete_cart_authenticated(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(CartItem.objects.count(), 0)
