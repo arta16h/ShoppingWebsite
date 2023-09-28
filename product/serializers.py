@@ -16,3 +16,16 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class SearchProductSerializer(serializers.Serializer):
     name=serializers.CharField()
+
+
+class ProductListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Product
+        fields=[
+            "name",
+            "description",
+            "price",
+            "quantity",
+            "image",
+            "category"
+            ]
