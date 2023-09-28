@@ -66,3 +66,10 @@ class TestCartApiView(APITestCase):
         self.cart = Cart.objects.create(customer=self.user)
         self.cart_item = CartItem.objects.create(cart=self.cart, product=self.product, quantity=2)
         self.url = reverse("cart_api")
+
+    def test_get_cart_authenticated(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_data = CartSerializer(self.cart).data
+        self.assertEqual(response.data, expected_data)
