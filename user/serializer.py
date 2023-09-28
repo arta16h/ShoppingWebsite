@@ -60,7 +60,7 @@ class LoginSerializer(serializers.Serializer):
         request.session["otp"] = random.randint(1000, 9999)
         request.session["otp_expire"] = (timezone.now() + timedelta(minutes=10)).strftime("%d/%m/%Y, %H:%M:%S")
         request.session["phone"]=phone
-        print(f"generated:{request.session["otp"]}  until:{request.session["otp_expire"]}")
+        print(f"generated:{request.session['otp']}  until:{request.session['otp_expire']}")
 
 
 class AddressSerializer(serializers.ModelSerializer):
