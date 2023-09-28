@@ -14,3 +14,44 @@ from model_bakery import baker
 from decimal import Decimal
 
 # Create your tests here.
+
+class TestAddToCartApiView(APITestCase):
+    def setUp(self):
+        self.category = baker.make(Category)
+        self.product = baker.make(
+            Product, info="", price=Decimal(10.00), category=self.category
+        )
+        self.url = reverse("add_to_cart_api")
+        self.client = APIClient()
+
+    def test_add_to_cart_authenticated(self):
+        self.user = User.objects.create(phone_number="09369513223", role=1)
+        self.cart = Cart.objects.create(user=self.user)
+        self.client.force_authenticate(user=self.user)
+        data = {"product_id": self.product.id}
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(CartItem.objects.count(), 1)
+        self.assertIn("cart_items", response.data)
+        self.assertIn("total_price", response.data)
+
+    def test_add_to_cart_unauthenticated_user(self):
+        self.client.logout()
+        response = self.client.post(self.url, data={"product_id": self.product.id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        product_data = ProductSerializer(self.product).data
+        product_data["price"] = str(product_data["price"])
+        product_data["discounted_price"] = "10.00"
+        expected_cart_data = {
+            "user": None,
+            "cart_items": [{"quantity": 1, "product": product_data}],
+            "total_price_with_discount": "10.00",
+            "total_price": "10.00",
+        }
+        self.assertEqual(response.data, expected_cart_data)
+
+    def test_add_to_cart_inactive_product(self):
+        self.product.is_active=False
+        self.product.save()
+        response = self.client.post(self.url, data={"product_id": self.product.id})
+        self.assertEqual(response.data, {"message": "Product is not available"})
