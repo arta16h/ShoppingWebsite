@@ -23,6 +23,20 @@ class UserVerifySerializer(serializers.Serializer):
     otp = serializers.CharField(max_length=4)
 
 
+class LoginOTPSerializer(serializers.Serializer):
+    otp=serializers.IntegerField(required=True, allow_null=False)
+
+    def validate(self, data):
+        otp=data.get("otp")
+        request=self.context.get("request")
+        if not otp==request.session.get("otp"):
+            raise serializers.ValidationError
+        if not User.objects.filter(phone=request.session.get("phone")).exists():
+            raise serializers.ValidationError
+
+        return data
+
+
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
