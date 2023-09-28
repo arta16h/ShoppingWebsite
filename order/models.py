@@ -84,5 +84,27 @@ class Cart:
     def total_price(self):
         cart_items = self.cart_items.select_related("product")
         return cart_items.aggregate(
-            total_price=Sum(F("product__price") * F("quantity"))
-        )["total_price"]
+            total_price=Sum(F("product__price") * F("quantity")))["total_price"]
+    
+
+class CartItem:
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.SET_NULL,
+        related_name="cart_items",
+        null=True,
+        blank=True,
+    )
+    cart = models.ForeignKey(
+        Cart,
+        on_delete=models.CASCADE,
+        related_name="cart_items",
+    )
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.cart}, {self.product}"
+
+    class Meta:
+        verbose_name_plural = "cart items"
+        unique_together = ["cart", "product"]
