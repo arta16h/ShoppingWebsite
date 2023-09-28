@@ -11,6 +11,14 @@ class JwtHelper:
             "exp": datetime.utcnow() + timedelta(minutes=expires_in_minutes)
         }
         return jwt.encode(payload, secret_key, algorithm="HS256")
+    
+    @staticmethod
+    def validate_jwt_token(token, secret_key):
+        try:
+            payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+            return payload.get("user_id")
+        except jwt.DecodeError:
+            return None
 
 def generate_access_token(user, expiration_time_minutes=60):
     access_token_payload = {
