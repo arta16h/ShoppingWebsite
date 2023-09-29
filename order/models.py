@@ -55,7 +55,7 @@ class OrderItem:
 
 class Cart:
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="cart")
-    discount = models.OneToOneField(Discount, on_delete=models.SET_NULL, null=True, blank=True)
+    discount = models.OneToOneField("Discount", on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "carts"
@@ -89,14 +89,14 @@ class Cart:
 
 class CartItem:
     product = models.ForeignKey(
-        Product,
+        "Product",
         on_delete=models.SET_NULL,
         related_name="cart_items",
         null=True,
         blank=True,
     )
     cart = models.ForeignKey(
-        Cart,
+        "Cart",
         on_delete=models.CASCADE,
         related_name="cart_items",
     )
