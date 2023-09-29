@@ -1,7 +1,9 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import AddtoCartSerializer
 from .models import OrderItem
@@ -25,7 +27,7 @@ class DeleteCartView(View):
         response.delete_cookie("cart")
 
 
-class OrderItemUpdateView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class OrderItemUpdateView(LoginRequiredMixin, PermissionRequiredMixin, APIView):
     def post(self, request, *args, **kwargs):
         order_id = kwargs["pk"]
         order_item_id = request.POST.get("orderitem")
@@ -35,6 +37,13 @@ class OrderItemUpdateView(LoginRequiredMixin, PermissionRequiredMixin, View):
         order_item.quantity = int(quantity)
         order_item.save()
 
-        return redirect("order_details", order_id)
+        return Response(data={"message": "succeeded"})
     
 
+class OrderItemDeleteView(LoginRequiredMixin, PermissionRequiredMixin, APIView):
+    # permission_required = "orders.view_order"
+    model_class = OrderItem
+
+    def get(self, request, *args, **kwargs):
+        OrderItem.objects.filter(pk=kwargs["pk"]).delete()
+        return Response(data={"message": "succeeded"})
